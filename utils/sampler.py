@@ -8,5 +8,8 @@
 
 from numpy.random import rand
 
-def simple_up_sample():
-    pass
+def simple_up_sample(data_train, uprate):
+    return data_train
+
+def simple_down_sample(data_train, downrate):
+    return data_train
