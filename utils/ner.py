@@ -9,7 +9,6 @@
 from seqeval.metrics import f1_score as seq_f1_score
 
 
-
 def bio2bioes_str(tag_str):
     """
     'O O O O O O B-BANK I-BANK O O O O O O B-COMMENTS_ADJ I-COMMENTS_ADJ O B-COMMENTS_N' 
