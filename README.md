@@ -1,4 +1,4 @@
-# NLP-Comp-Master
+# NLP-Comp-Template
 nlp 比赛代码模版
 
 ## 文件结构
@@ -20,3 +20,10 @@ nlp 比赛代码模版
 &emsp;&emsp;|--train  
 &emsp;&emsp;|--test  
 --run.sh 运行脚本
+
+
+## TODO
+1.程序入口
+2.统一metric模块 -> 添加随step打印指标
+3.实现pipeline模块
+4.inference模块
