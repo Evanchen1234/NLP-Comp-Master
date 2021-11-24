@@ -18,9 +18,9 @@ _C.DO_TRAIN = True  # 是否训练模型
 _C.DO_VAL = True    # 是否验证模型
 _C.DO_TEST = True   # 是否输出测试集结果
 _C.MAX_LEN = 512    # 输入文本统一最大长度
-_C.TRAIN_PATH = 'raw_data/train/.'    # 训练集位置
+_C.TRAIN_PATH = 'raw_data/train/.'  # 训练集位置
 _C.TEST_PATH = 'raw_data/test/.'    # 训练集位置
-_C.CACHE_PATH = 'cache'    # 模型及对应数据集输出位置
+_C.CACHE_PATH = 'cache'             # 模型及对应数据集输出位置
 
 # Classifier
 _C.CLS = CN()
@@ -30,16 +30,21 @@ _C.CLS.NUM_LABEL = 3    # 单输出的二分类
 _C.NER = CN()
 _C.NER.NUM_TAG = 17     # 标签数量
 
-# Model
+# Net
+## Bert
 _C.MODEL = CN()
 _C.MODEL.MODEL_NAME = 'classifier'                    # 模型名称 
 _C.MODEL.LOSS = 'bceloss'                             # 指定损失函数 
 _C.MODEL.ENCODER_TYPE = 'bert'                        # encoder类型，bert，nezha，zen...
-_C.MODEL.PRETRAIN_PATH = 'pt_models/bert_base_wwm'    # encoder的预先训练模型文件夹地址
-_C.MODEL.DROPOUT = 0.2                                # dropout
 _C.MODEL.BERT_OUT_SIZE = 768                          # bert_out_size # 可以从bert配置文件中读取，后面自动配置
+_C.MODEL.PRETRAIN_PATH = 'pt_models/bert_base_wwm'    # encoder的预先训练模型文件夹地址
+## RNN
+_C.MODEL.DROPOUT = 0.2                                # dropout
 _C.MODEL.MID_LINEAR_DIM = 128                         # 全连接维度
-
+_C.MODEL.RNN_REC_TYPE = 'gru'                         # rnn类型
+_C.MODEL.RNN_HIDDEN_SIZE = 300                        # rnn隐藏层大小
+_C.MODEL.RNN_HIDDEN_LAYERS = 2                        # rnn层数
+_C.MODEL.RNN_BIDI = True                              # 是否为双向rnn
 
 # Preprocessing
 _C.PRE.PRE_PROCESSOR = None # 文本预处理方法，去掉无效字符，删除矛盾样本，文本或label转换，文本纠错等
@@ -70,14 +75,14 @@ _C.TS.RET_ROOT = 'submit'   # 结果文件夹
 
 # Trick
 _C.TRICK = CN()
-_C.TRICK.USE_ADV_TRAINING = False   # 是否加入对抗训练
-_C.TRICK.ADV_TYPE = 'pgd'           # 对抗训练类型， fgm，pgd
-_C.TRICK.USE_GRAD_CLIP = False       # 是否进行梯度裁剪
-_C.TRICK.USE_DIFF_LR = False        # 是否使用差分学习率
-_C.TRICK.BERT_LR = 3e-6             # 设置encoder的学习率
-_C.TRICK.SIMPLE_UPSAMPLE_RATE = 0   # 上采样率
-_C.TRICK.SIMPLE_DOWNSAMPLE_RATE = 0 # 下采样率
-_C.TRICK.MULTI_DROPOUT = False       # multi-drop-out
-_C.TRICK.USE_PSEUDO_DATA = False       # 是否添加伪标签数据
+_C.TRICK.USE_ADV_TRAINING = False       # 是否加入对抗训练
+_C.TRICK.ADV_TYPE = 'pgd'               # 对抗训练类型， fgm，pgd
+_C.TRICK.USE_GRAD_CLIP = False          # 是否进行梯度裁剪
+_C.TRICK.USE_DIFF_LR = False            # 是否使用差分学习率
+_C.TRICK.BERT_LR = 3e-6                 # 设置encoder的学习率
+_C.TRICK.SIMPLE_UPSAMPLE_RATE = 0       # 上采样率
+_C.TRICK.SIMPLE_DOWNSAMPLE_RATE = 0     # 下采样率
+_C.TRICK.MULTI_DROPOUT = False          # multi-drop-out
+_C.TRICK.USE_PSEUDO_DATA = False        # 是否添加伪标签数据
 
 cfg = _C
