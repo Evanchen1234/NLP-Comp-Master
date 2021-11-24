@@ -49,7 +49,6 @@ def bioes2bio_str(tag_str):
         new_tags.append(tag)
     return ' '.join(new_tags)
 
-
 class TagTransmit(object):
     def __init__(self):
         tags = [
