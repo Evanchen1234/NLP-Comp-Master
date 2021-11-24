@@ -6,6 +6,10 @@
 @Contact :   chenh_cnyn@163.com
 '''
 
+from seqeval.metrics import f1_score as seq_f1_score
+
+
+
 def bio2bioes_str(tag_str):
     """
     'O O O O O O B-BANK I-BANK O O O O O O B-COMMENTS_ADJ I-COMMENTS_ADJ O B-COMMENTS_N' 
@@ -44,3 +48,40 @@ def bioes2bio_str(tag_str):
             tag = 'B-' + tag[2:]
         new_tags.append(tag)
     return ' '.join(new_tags)
+
+
+class TagTransmit(object):
+    def __init__(self):
+        tags = [
+            'O',
+            'B-BANK',
+            'I-BANK',
+            'B-PRODUCT',
+            'I-PRODUCT',
+            'B-COMMENTS_N',
+            'I-COMMENTS_N',
+            'B-COMMENTS_ADJ',
+            'I-COMMENTS_ADJ',
+            'E-BANK',
+            'E-PRODUCT',
+            'E-COMMENTS_N',
+            'E-COMMENTS_ADJ',
+            'S-BANK',
+            'S-PRODUCT',
+            'S-COMMENTS_N',
+            'S-COMMENTS_ADJ'
+            ]
+        self.id2tag = {i:j for i, j in enumerate(tags)}
+        self.tag2id = {j:i for i, j in enumerate(tags)}
+    
+    def encode(self, row):
+        return [self.tag2id[item] for item in row]
+
+    def decode(self, row):
+        return [self.id2tag[item] for item in row]
+
+tt = TagTransmit()
+def strict_f1(y_pred, y_true):
+    y_pred = [tt.decode(item) for item in y_pred]
+    y_true = [tt.decode(item) for item in y_true]
+    return seq_f1_score(y_true, y_pred, mode='strict')
