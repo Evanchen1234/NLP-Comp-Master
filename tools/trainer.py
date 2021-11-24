@@ -10,8 +10,15 @@ import os
 import random
 import torch
 import numpy as np
+from tqdm import tqdm
+from functools import reduce
+from layers import PGD, FGM
+from utils.dataset import Batch
 from utils.merge_extra_data import merge_pseudo_data
 from utils.sampler import simple_up_sample, simple_down_sample
+from sklearn.metrics import cohen_kappa_score, accuracy_score 
+from utils.ner import strict_f1
+
 
 def train(cfg,
           kf,
@@ -50,7 +57,6 @@ def train(cfg,
 
     oof_cache_fn(oof, train_examples)
 
-
 def do_train(cfg,
              model,
              data_train,
@@ -80,7 +86,7 @@ def do_train(cfg,
         
         with torch.no_grad():
             emo_preds, emo_logits, tag_preds, acc, kappa, f1, score = do_val(cfg, model, data_val)
-            print('Test-KFold: %d, Epoch: %d, loss: %f, acc: %f, kappa: %f, f1: %f, score: %f' % (KF, epoch, epoch_loss, acc, kappa, f1, score))
+            print('Test-KFold: %d, Epoch: %d,  acc: %f, kappa: %f, f1: %f, score: %f' % (KF, epoch, acc, kappa, f1, score))
             
         if score > best_score:
             best_epoch, best_kappa, best_f1 = epoch, kappa, f1
@@ -96,9 +102,91 @@ def do_train(cfg,
     print('Best-Test-KFold: %d, Epoch: %d, loss: %f, kappa: %f, f1: %f, score: %f' % (KF, best_epoch, 0, best_kappa, best_f1, best_score))
     return best_oof_preds
 
+def do_train_epoch(cfg,
+                   model,
+                   data_train,
+                   optimizer,
+                   scheduler,
+                   loss_fn
+):    
+    random.shuffle(data_train)
+    model.train()
+    epoch_loss = .0
+    if cfg.TRICK.USE_ADV_TRAINING and cfg.TRICK.ADV_TYPE=='pgd':
+        k = 3
+        pgd = PGD(model)
+        
+    for ix in tqdm(range(0, len(data_train), cfg.TRAIN.BATCH_SIZE)):
+        if ix + cfg.TRAIN.BATCH_SIZE < len(data_train):
+            batch_data = data_train[ix: ix + cfg.TRAIN.BATCH_SIZE]
+        else:
+            batch_data = data_train[ix:]
+        batch_data = sorted(batch_data, key=lambda x: -len(x.input_ids))
+        examples = Batch(batch_data)
 
-def do_train_epoch():
-    pass
+        optimizer.zero_grad()
 
-def do_val():
-    pass
+        logits, _, tokens_loss = model(examples)
+        loss = loss_fn(logits, examples.emo_labels, tokens_loss)
+        epoch_loss += loss
+        loss.backward()
+
+        if cfg.TRICK.USE_GRAD_CLIP:
+            torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)  # default 1
+
+        if cfg.TRICK.USE_ADV_TRAINING and cfg.TRICK.ADV_TYPE=='fgm':
+            fgm = FGM(model)
+            fgm.attack()
+            logits, _, tokens_loss = model(examples)
+            loss_adv = loss_fn(logits, examples.emo_labels, tokens_loss)
+            loss_adv.backward()
+            fgm.restore()
+        
+        if cfg.TRICK.USE_ADV_TRAINING and cfg.TRICK.ADV_TYPE=='pgd':
+            pgd.backup_grad()
+            for t in range(k):
+                pgd.attack(is_first_attack=(t==0))
+                if t != k-1:
+                    model.zero_grad()
+                else:
+                    pgd.restore_grad()
+                logits, _, tokens_loss = model(examples)
+                loss_adv = loss_fn(logits, examples.emo_labels, tokens_loss)
+                loss_adv.backward() 
+            pgd.restore()
+    
+        optimizer.step()
+        scheduler.step()
+
+    return epoch_loss
+
+def do_val(cfg, model, val_examples):
+    model.eval()
+    
+    emo_preds = list()
+    tag_preds = list()
+    emo_labels = [exam.emo_label for exam in val_examples]
+    tag_labels = [exam.tag_label for exam in val_examples]
+    emo_logits = list()
+    
+    for ix in range(0, len(val_examples), cfg.VAL.BATCH_SIZE):
+        if ix + cfg.VAL.BATCH_SIZE < len(val_examples):
+            batch_data = val_examples[ix: ix + cfg.VAL.BATCH_SIZE]
+        else:
+            batch_data = val_examples[ix:]
+        examples = Batch(batch_data)
+        
+        logits, tokens_out, _ = model(examples)
+        emo_preds += list(logits.max(1)[1].cpu().numpy())
+        tag_preds += tokens_out
+        emo_logits.append(logits.cpu().numpy())
+        
+    emo_logits = reduce(lambda x,y : np.r_[x, y], emo_logits)
+    
+    acc = accuracy_score(emo_labels, emo_preds)
+    kappa = cohen_kappa_score(emo_labels, emo_preds)
+    f1 = strict_f1(tag_preds, tag_labels)
+    kappa=0
+    #f1=0
+    score = 0.5*kappa + 0.5*f1
+    return emo_preds, emo_logits, tag_preds, acc, kappa, f1, score
