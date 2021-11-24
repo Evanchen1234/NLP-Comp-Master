@@ -6,6 +6,6 @@
 @Contact :   chenh_cnyn@163.com
 '''
 
-from default import cfg
+from .default import cfg as default_cfg
 
-__all__ = ['cfg']
+__all__ = ['default_cfg']

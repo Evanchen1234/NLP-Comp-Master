@@ -47,6 +47,7 @@ _C.MODEL.RNN_HIDDEN_LAYERS = 2                        # rnn层数
 _C.MODEL.RNN_BIDI = True                              # 是否为双向rnn
 
 # Preprocessing
+_C.PRE = CN()
 _C.PRE.PRE_PROCESSOR = None # 文本预处理方法，去掉无效字符，删除矛盾样本，文本或label转换，文本纠错等
 _C.PRE.FEA_EXTRACTOR = None # 特征样本构造，产出训练集合与测试集合
 
