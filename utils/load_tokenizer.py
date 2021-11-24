@@ -9,11 +9,11 @@
 from transformers import BertTokenizer, ElectraTokenizer
 
 
-def load_tokenizer(args):
+def load_tokenizer(cfg):
     tokenizer = None
-    if args.bert_name.lower() == 'bert':
-        tokenizer = BertTokenizer.from_pretrained(args.bert_path)
-    elif args.bert_name.lower() == 'electra':
-        tokenizer = ElectraTokenizer.from_pretrained(args.bert_path)
+    if cfg.MODEL.ENCODER_TYPE.lower() == 'bert':
+        tokenizer = BertTokenizer.from_pretrained(cfg.MODEL.PRETRAIN_PATH)
+    elif cfg.MODEL.ENCODER_TYPE.lower() == 'electra':
+        tokenizer = ElectraTokenizer.from_pretrained(cfg.MODEL.PRETRAIN_PATH)
     assert tokenizer is not None, 'load tokenizer error'
     return tokenizer
