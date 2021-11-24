@@ -70,8 +70,8 @@ _C.TRICK.ADV_TYPE = 'pgd'           # 对抗训练类型， fgm，pgd
 _C.TRICK.USE_GRAD_CLIP = True       # 是否进行梯度裁剪
 _C.TRICK.USE_DIFF_LR = False        # 是否使用差分学习率
 _C.TRICK.BERT_LR = 3e-6             # 设置encoder的学习率
-_C.TRICK.SAMPLE_UPSAMPLE_RATE = 0   # 上采样率
-_C.TRICK.SAMPLE_DOWNSAMPLE_RATE = 0 # 下采样率
+_C.TRICK.SIMPLE_UPSAMPLE_RATE = 0   # 上采样率
+_C.TRICK.SIMPLE_DOWNSAMPLE_RATE = 0 # 下采样率
 _C.TRICK.MULTI_DROPOUT = True       # multi-drop-out
 
 cfg = _C
