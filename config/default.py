@@ -86,6 +86,7 @@ _C.EXP = CN()
 _C.EXP.PRE_PROCESSOR = None # 文本预处理方法，去掉无效字符，删除矛盾样本，文本或label转换，文本纠错等, optinoal
 _C.EXP.FEA_EXTRACTOR = None # 特征样本构造，产出训练集合与测试集合
 _C.EXP.KF_INSTANCE = None   # 交叉验证实例， optional
+_C.EXP.NET = None           # 网络模型类
 _C.EXP.LOSS_FN = None       # 损失函数实例
 _C.EXP.OPTIMIZER = None     # 优化器实例
 _C.EXP.SCHEDULER = None     # 学习率scheduler实例

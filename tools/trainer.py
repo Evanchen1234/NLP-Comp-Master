@@ -22,7 +22,7 @@ from utils.ner import strict_f1
 
 def train(cfg,
           kf,
-          model,
+          net,
           loss_fn,
           optimizer,
           scheduler,
@@ -35,9 +35,6 @@ def train(cfg,
     assert isinstance(train_examples, np.ndarray)
     random.shuffle(train_examples)
     
-    if cfg.USE_CUDA:
-        model.cuda()
-    
     if cfg.TRAIN.USE_CV:
         train_val_idx = kf
     else:
@@ -48,6 +45,10 @@ def train(cfg,
         
     oof = dict()
     for k, (train_idx, val_idx) in enumerate(train_val_idx):
+        model = net(cfg)
+        if cfg.USE_CUDA: 
+            model.cuda()
+        
         data_train = train_examples[train_idx]
         data_val = train_examples[val_idx] 
         best_oof_preds = do_train(cfg, model, data_train, data_val, optimizer, scheduler, loss_fn, k)
@@ -55,7 +56,7 @@ def train(cfg,
             oof[idx] = best_oof_preds[idx]
         torch.cuda.empty_cache()
 
-    oof_cache_fn(oof, train_examples)
+    oof_cache_fn(cfg, oof, train_examples)
 
 def do_train(cfg,
              model,
