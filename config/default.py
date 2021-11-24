@@ -46,11 +46,6 @@ _C.MODEL.RNN_HIDDEN_SIZE = 300                        # rnn隐藏层大小
 _C.MODEL.RNN_HIDDEN_LAYERS = 2                        # rnn层数
 _C.MODEL.RNN_BIDI = True                              # 是否为双向rnn
 
-# Preprocessing
-_C.PRE = CN()
-_C.PRE.PRE_PROCESSOR = None # 文本预处理方法，去掉无效字符，删除矛盾样本，文本或label转换，文本纠错等
-_C.PRE.FEA_EXTRACTOR = None # 特征样本构造，产出训练集合与测试集合
-
 # Train
 _C.TRAIN = CN()
 _C.TRAIN.USE_CV = True                  # 是否使用交叉验证
@@ -85,5 +80,16 @@ _C.TRICK.SIMPLE_UPSAMPLE_RATE = 0       # 上采样率
 _C.TRICK.SIMPLE_DOWNSAMPLE_RATE = 0     # 下采样率
 _C.TRICK.MULTI_DROPOUT = False          # multi-drop-out
 _C.TRICK.USE_PSEUDO_DATA = False        # 是否添加伪标签数据
+
+# Experiment
+_C.EXP = CN()
+_C.EXP.PRE_PROCESSOR = None # 文本预处理方法，去掉无效字符，删除矛盾样本，文本或label转换，文本纠错等, optinoal
+_C.EXP.FEA_EXTRACTOR = None # 特征样本构造，产出训练集合与测试集合
+_C.EXP.KF_INSTANCE = None   # 交叉验证实例， optional
+_C.EXP.LOSS_FN = None       # 损失函数实例
+_C.EXP.OPTIMIZER = None     # 优化器实例
+_C.EXP.SCHEDULER = None     # 学习率scheduler实例
+_C.EXP.OOF_CACHE_FN = None  # 模型输出数据保存方法
+_C.EXP.METRICS = None       # 评价指标实际例
 
 cfg = _C
