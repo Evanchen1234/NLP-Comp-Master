@@ -24,7 +24,7 @@ _C.CACHE_PATH = 'cache'    # 模型及对应数据集输出位置
 
 # Classifier
 _C.CLS = CN()
-_C.CLS.NUM_LABEL = 1    # 单输出的二分类
+_C.CLS.NUM_LABEL = 3    # 单输出的二分类
 
 # Ner
 _C.NER = CN()
@@ -36,6 +36,10 @@ _C.MODEL.MODEL_NAME = 'classifier'                    # 模型名称
 _C.MODEL.LOSS = 'bceloss'                             # 指定损失函数 
 _C.MODEL.ENCODER_TYPE = 'bert'                        # encoder类型，bert，nezha，zen...
 _C.MODEL.PRETRAIN_PATH = 'pt_models/bert_base_wwm'    # encoder的预先训练模型文件夹地址
+_C.MODEL.DROPOUT = 0.2                                # dropout
+_C.MODEL.BERT_OUT_SIZE = 768                          # bert_out_size # 可以从bert配置文件中读取，后面自动配置
+_C.MODEL.MID_LINEAR_DIM = 128                         # 全连接维度
+
 
 # Preprocessing
 _C.PRE.PRE_PROCESSOR = None # 文本预处理方法，去掉无效字符，删除矛盾样本，文本或label转换，文本纠错等
