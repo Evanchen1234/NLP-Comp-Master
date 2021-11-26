@@ -6,7 +6,7 @@
 @Contact :   chenh_cnyn@163.com
 '''
 
-from .default import cfg as default_cfg
-from .container import Container
+from .default import cfg 
 
-__all__ = ['default_cfg', 'Container']
+
+__all__ = ['cfg']
