@@ -6,8 +6,9 @@
 @Contact :   chenh_cnyn@163.com
 '''
 
-class Context(object):
-    def __init__(self):
+class Zerba(object):
+    def __init__(self, mark):
+        self.mark = mark
         self.pre_c = dict()         
         self.fea_c = dict()         
         self.net_c = dict()         
@@ -25,7 +26,7 @@ class Context(object):
             assert function.__code__.co_argcount == 0, \
                         'Do not set parameter for {} method'.format(function.__name__)
             self.pre_c[version] = function()
-            return Context.__anno 
+            return Zerba.__anno 
         return _anno
 
     def fea(self, version):
@@ -33,7 +34,7 @@ class Context(object):
             assert function.__code__.co_argcount == 0, \
                         'Do not set parameter for {} method'.format(function.__name__)
             self.fea_c[version] = function()
-            return Context.__anno 
+            return Zerba.__anno 
         return _anno
 
     def net(self, version):
@@ -41,7 +42,7 @@ class Context(object):
                 assert function.__code__.co_argcount == 0, \
                             'Do not set parameter for {} method'.format(function.__name__)
                 self.net_c[version] = function()
-                return Context.__anno 
+                return Zerba.__anno 
             return _anno
 
     def loss(self, version):
@@ -49,7 +50,7 @@ class Context(object):
             assert function.__code__.co_argcount == 0, \
                         'Do not set parameter for {} method'.format(function.__name__)
             self.loss_c[version] = function()
-            return Context.__anno 
+            return Zerba.__anno 
         return _anno
 
     def optimizer(self, version):
@@ -57,7 +58,7 @@ class Context(object):
             assert function.__code__.co_argcount == 0, \
                         'Do not set parameter for {} method'.format(function.__name__)
             self.optimizer_c[version] = function()
-            return Context.__anno 
+            return Zerba.__anno 
         return _anno
 
     def scheduler(self, version):
@@ -65,7 +66,7 @@ class Context(object):
             assert function.__code__.co_argcount == 0, \
                         'Do not set parameter for {} method'.format(function.__name__)
             self.scheduler_c[version] = function()
-            return Context.__anno 
+            return Zerba.__anno 
         return _anno
 
     def metrics(self, version):
@@ -73,5 +74,5 @@ class Context(object):
             assert function.__code__.co_argcount == 0, \
                         'Do not set parameter for {} method'.format(function.__name__)
             self.metrics_c[version] = function()
-            return Context.__anno 
+            return Zerba.__anno 
         return _anno
