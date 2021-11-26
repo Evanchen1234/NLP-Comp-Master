@@ -7,5 +7,6 @@
 '''
 
 from .default import cfg as default_cfg
+from .container import Container
 
-__all__ = ['default_cfg']
+__all__ = ['default_cfg', 'Container']
